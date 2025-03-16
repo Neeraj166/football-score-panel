@@ -22,8 +22,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        @foreach($players as $player)
+    @foreach($players as $player)
+        <tr>
             <td>{{ $player->name }}</td>
             <td>{{ $player->role }}</td>
             <td>{{ $player->position }}</td>
@@ -44,8 +44,7 @@
                     <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
                 </form>
             </td>
-        @endforeach
-
-    </tr>
+        </tr>
+    @endforeach
     </tbody>
 </table>
