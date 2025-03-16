@@ -13,7 +13,7 @@
 
 <h2>Player Information Form</h2>
 
-<form action="{{ route('admin.players.update') }}" method="POST">
+<form action="{{ route('admin.players.store') }}" method="POST">
     @csrf
 
     <!-- Name -->
