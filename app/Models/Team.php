@@ -22,4 +22,9 @@ class Team extends Model
     {
         return $this->belongsTo(Staff::class, 'manager_id', 'id');
     }
+
+    public function players()
+    {
+        return $this->belongsToMany(Player::class, 'team_players');
+    }
 }

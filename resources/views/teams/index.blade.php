@@ -35,6 +35,7 @@
                 <td>
                     <a href="{{ route('admin.teams.show', ['team' => $team]) }}">View</a> |
                     <a href="{{ route('admin.teams.edit', ['team' => $team]) }}">Update</a> |
+                    <a href="{{ route('admin.teams.teamPlayers', ['team' => $team]) }}">Add Players</a> |
                     <form action="{{ route('admin.teams.destroy', ['team' => $team]) }}" method="POST" style="display: inline-block">
                         @csrf
                         @method('DELETE')

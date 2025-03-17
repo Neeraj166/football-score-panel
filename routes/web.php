@@ -34,15 +34,19 @@ Route::prefix('admin')->group(function () {
         ]
     );
 
-    Route::resource('teams', TeamController::class)->names(
-        [
-            'index' => 'admin.teams.index',
-            'create' => 'admin.teams.create',
-            'show' => 'admin.teams.show',
-            'store' => 'admin.teams.store',
-            'edit' => 'admin.teams.edit',
-            'update' => 'admin.teams.update',
-            'destroy' => 'admin.teams.destroy',
-        ]
-    );
+    Route::name('admin.')->group(function () {
+        Route::resource('teams', TeamController::class)->names([
+            'index' => 'teams.index',
+            'create' => 'teams.create',
+            'show' => 'teams.show',
+            'store' => 'teams.store',
+            'edit' => 'teams.edit',
+            'update' => 'teams.update',
+            'destroy' => 'teams.destroy',
+        ]);
+
+        Route::get('teams/{team}/players', [TeamController::class, 'viewTeamPlayers'])->name('teams.teamPlayers');
+        Route::post('teams/{team}/players', [TeamController::class, 'updateTeamPlayers'])->name('teams.teamPlayers.update');
+    });
+
 });

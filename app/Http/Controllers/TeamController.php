@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
+use App\Models\Player;
 use App\Models\Staff;
 use App\Models\Team;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TeamController extends Controller
 {
@@ -90,5 +93,36 @@ class TeamController extends Controller
     {
         $team->delete();
         return redirect()->back()->with('success', 'Team Deleted.');
+    }
+
+    public function viewTeamPlayers(Team $team)
+    {
+        $players = Player::select('players.*', DB::raw('IF(team_players.player_id IS NOT NULL, 1, 0) as player_in_team'), 'team_players.is_captain')
+            ->leftJoin('team_players', function ($join) use ($team) {
+                $join->on('players.id', '=', 'team_players.player_id')
+                    ->where('team_players.team_id', '=', $team->id);
+            })->whereNull('deleted_at')->where('status', '1')->orderBy('name', 'ASC')->get();
+
+        return view('teams.teamPlayer', compact('team', 'players'));
+    }
+
+    public function updateTeamPlayers(Request $request, Team $team)
+    {
+        $captainPlayer = $request->get('captainPlayer');
+        $selectedPlayers = $request->get('selectedPlayers');
+
+        $team->players()->sync($selectedPlayers);
+
+        if ($captainPlayer) {
+            $team->players()->updateExistingPivot($captainPlayer, ['is_captain' => '1']);
+
+            foreach ($selectedPlayers as $playerId) {
+                if ($playerId !== $captainPlayer) {
+                    $team->players()->updateExistingPivot($playerId, ['is_captain' => '0']);
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Team players updated successfully']);
     }
 }

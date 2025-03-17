@@ -17,4 +17,9 @@ class Player extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = ['name', 'role', 'position', 'image', 'nationality', 'height', 'height_unit', 'weight', 'weight_unit', 'age', 'status'];
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'team_players');
+    }
 }
