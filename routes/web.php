@@ -12,7 +12,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-});
+})->name('dashboard');
 
 Route::prefix('admin')->group(function () {
     Route::resource('players', PlayerController::class)->names(
@@ -58,7 +58,6 @@ Route::prefix('admin')->group(function () {
             'create' => 'games.create',
             'store' => 'games.store',
         ]);
-
     });
 
 });

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    
+
     <aside>
     <div class="dashboard-container">
     <!-- Sidebar -->
@@ -14,12 +14,12 @@
                 <!-- <img src= '../../images/' alt=""> -->
         </div>
         <ul>
-            <li><a href="" class="active">Dashboard</a></li>
+            <li><a href="{{ route('dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="#">Leagues</a></li>
-            <li><a href="#">Teams</a></li>
-            <li><a href="#">Players</a></li>
-            <li><a href="#">Refrees</a></li>
-            <li><a href="#">Matches</a></li>
+            <li><a href="{{ route('admin.teams.index') }}">Teams</a></li>
+            <li><a href="{{ route('admin.players.index') }}">Players</a></li>
+            <li><a href="{{ route('admin.staffs.index') }}">Referees</a></li>
+            <li><a href="{{ route('admin.games.index') }}">Matches</a></li>
         </ul>
     </aside>
 
@@ -74,7 +74,7 @@
                 </div>
             </div>
         </div>
-     
+
     </main>
 </div>
 

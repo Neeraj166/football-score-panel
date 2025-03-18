@@ -34,7 +34,19 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        //
+        Game::create([
+            'date_time' => $request->date_time,
+            'venue' => $request->venue,
+            'weather' => $request->weather,
+            'team_a_id' => $request->team_a_id,
+            'team_b_id' => $request->team_b_id,
+            'referee' => $request->referee,
+            'first_linesmen' => $request->first_linesmen,
+            'second_linesmen' => $request->second_linesmen,
+            'official' => $request->official,
+        ]);
+
+        return redirect()->route('admin.games.index')->with('success', 'New Game Created.');
     }
 
     /**
