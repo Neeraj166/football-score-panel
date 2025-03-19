@@ -28,7 +28,7 @@
                 <h3>Football scoring System</h3>
             </div>
             <div class="login-box">
-                <h2>Login</h2>
+                <h4>Login</h4>
                 <form>
                     <div class="input-group">
                         <label for="email">Email</label>
