@@ -57,7 +57,44 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+    $(document).ready(function () {
+        let team_a_playing_xi = [];
+        let team_b_playing_xi = [];
 
+        $('.team_a_playing-xi').on('change', function () {
+            if($(this).prop('checked') === true) {
+                if(team_a_playing_xi.length > 1) {
+                    alert('Team A can only play 11 players!');
+                    $(this).prop('checked', false);
+                    return;
+                }
+
+                team_a_playing_xi.push($(this).data('id'));
+            } else {
+                const index = team_a_playing_xi.indexOf($(this).data('id'));
+                if (index > -1) {
+                    team_a_playing_xi.splice(index, 1);
+                }
+            }
+        })
+
+        $('.team_b_playing-xi').on('change', function () {
+            if($(this).prop('checked') === true) {
+                if(team_b_playing_xi.length > 1) {
+                    alert('Team B can only play 11 players!');
+                    $(this).prop('checked', false);
+                    return;
+                }
+
+                team_b_playing_xi.push($(this).data('id'));
+            } else {
+                const index = team_b_playing_xi.indexOf($(this).data('id'));
+                if (index > -1) {
+                    team_b_playing_xi.splice(index, 1);
+                }
+            }
+        })
+    })
 </script>
 
 
