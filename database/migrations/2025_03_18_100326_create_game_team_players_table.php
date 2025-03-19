@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('player_id')->constrained('players')->onDelete('cascade')->onUpdate('cascade');
             $table->string('player_name');
+            $table->string('jersey_no');
             $table->enum('status', ['0', '1', '2', '3'])->default('0')->comment('0: not selected, 1:  playing XI, 2: is_substitute, 3: subbed');
             $table->string('subbed_at');
             $table->string('subbed_for');

@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateGameRequest;
 use App\Models\Game;
 use App\Models\Staff;
 use App\Models\Team;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -92,9 +94,101 @@ class GameController extends Controller
 
     public function gamePlayingXI(Game $game)
     {
-        $team_a = $game->teamA()->first()->players()->get();
-        $team_b = $game->teamB()->first()->players()->get();
+        $team_a = $game->teamA()->first()->players()
+            ->orderBy('jersey_no', 'ASC')
+            ->get()
+            ->map(function ($player) use ($game) {
+                $playerStatus = DB::table('game_team_players')
+                    ->where('game_id', $game->id)
+                    ->where('player_id', $player->id)
+                    ->value('status');
+
+                $player->is_playing_xi = $playerStatus == '1';
+                $player->is_substitute = $playerStatus == '2';
+
+                return $player;
+            });
+
+        $team_b = $game->teamB()->first()->players()
+            ->orderBy('jersey_no', 'ASC')
+            ->get()
+            ->map(function ($player) use ($game) {
+                $playerStatus = DB::table('game_team_players')
+                    ->where('game_id', $game->id)
+                    ->where('player_id', $player->id)
+                    ->value('status');
+
+                $player->is_playing_xi = $playerStatus == '1';
+                $player->is_substitute = $playerStatus == '2';
+
+                return $player;
+            });
 
         return view('games.playingXI', compact('game', 'team_a', 'team_b'));
+    }
+
+    public function updateGamePlayingXI(Request $request, Game $game)
+    {
+        $teamAPlayingXI = $request->team_a_playing_xi ?? [];
+        $teamBPlayingXI = $request->team_b_playing_xi ?? [];
+        $teamASubs = $request->team_a_subs ?? [];
+        $teamBSubs = $request->team_b_subs ?? [];
+
+        $allPlayers = array_merge($teamAPlayingXI, $teamBPlayingXI, $teamASubs, $teamBSubs);
+
+        // Fetch player details (name, jersey_no) from the players table
+        $playerDetails = DB::table('players')
+            ->whereIn('id', $allPlayers)
+            ->pluck('name', 'id');
+
+        $playerJerseyNumbers = DB::table('team_players')
+            ->whereIn('player_id', $allPlayers)
+            ->pluck('jersey_no', 'player_id');
+
+        // Function to update or insert player data
+        $updateOrInsertPlayer = function ($playerId, $teamId, $status) use ($game, $playerDetails, $playerJerseyNumbers) {
+            DB::table('game_team_players')->updateOrInsert(
+                [
+                    'game_id' => $game->id,
+                    'team_id' => $teamId,
+                    'player_id' => $playerId,
+                ],
+                [
+                    'player_name' => $playerDetails[$playerId] ?? 'Unknown',
+                    'jersey_no' => $playerJerseyNumbers[$playerId] ?? '',
+                    'status' => $status,
+                    'subbed_at' => null,
+                    'subbed_for' => null,
+                    'has_yellow_carded' => '0',
+                    'has_red_carded' => '0',
+                    'updated_at' => now(),
+                ]
+            );
+        };
+
+        // Insert or update Team A Playing XI (status = 1)
+        foreach ($teamAPlayingXI as $playerId) {
+            $updateOrInsertPlayer($playerId, $game->team_a_id, '1');
+        }
+
+        // Insert or update Team B Playing XI (status = 1)
+        foreach ($teamBPlayingXI as $playerId) {
+            $updateOrInsertPlayer($playerId, $game->team_b_id, '1');
+        }
+
+        // Insert or update Team A Substitutes (status = 2)
+        foreach ($teamASubs as $playerId) {
+            $updateOrInsertPlayer($playerId, $game->team_a_id, '2');
+        }
+
+        // Insert or update Team B Substitutes (status = 2)
+        foreach ($teamBSubs as $playerId) {
+            $updateOrInsertPlayer($playerId, $game->team_b_id, '2');
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'url' => route('admin.games.index')
+        ]);
     }
 }

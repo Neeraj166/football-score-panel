@@ -61,6 +61,7 @@ Route::prefix('admin')->group(function () {
         ]);
 
         Route::get('games/{game}/playing-xi', [GameController::class, 'gamePlayingXI'])->name('games.playingXI');
+        Route::post('games/{game}/playing-xi', [GameController::class, 'updateGamePlayingXI'])->name('games.post.playingXI');
     });
 
 });
