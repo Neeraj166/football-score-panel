@@ -6,6 +6,7 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SubstitutionController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TournamentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -72,6 +73,13 @@ Route::prefix('admin')->group(function () {
         Route::prefix('games/{game}/teams/{team}/substitutions')->controller(SubstitutionController::class)->group(function () {
             Route::get('create', 'gameSubstitutionCreate')->name('games.substitution.create');
             Route::post('/', 'gameSubstitutionStore')->name('games.substitution.store');
+        });
+
+        Route::prefix('tournaments')->controller(TournamentController::class)->group(function () {
+            Route::get('/', 'listTournament')->name('tournament.index');
+            Route::get('/create', 'createTournament')->name('tournament.create');
+            Route::post('/store', 'store')->name('tournament.store');
+            Route::post('/update', 'updateTournament')->name('tournament.edit');
         });
     });
 
